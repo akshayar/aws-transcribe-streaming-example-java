@@ -162,11 +162,7 @@ public class TranscribeStreamingRetryClient {
         });
     }
     private StartStreamTranscriptionRequest rebuildRequestWithSession(StartStreamTranscriptionRequest request) {
-        return StartStreamTranscriptionRequest.builder()
-                .languageCode(request.languageCode())
-                .mediaEncoding(request.mediaEncoding())
-                .mediaSampleRateHertz(request.mediaSampleRateHertz())
-                .sessionId(UUID.randomUUID().toString())
+        return request.toBuilder().sessionId(UUID.randomUUID().toString())
                 .build();
     }
 

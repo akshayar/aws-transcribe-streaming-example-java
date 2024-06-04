@@ -66,11 +66,13 @@ public class TranscribeStreamingClientWrapper {
         Region region = getRegion();
         String endpoint = "https://transcribestreaming." + region.toString().toLowerCase().replace('_','-') + ".amazonaws.com";
         try {
-            return TranscribeStreamingAsyncClient.builder()
+            TranscribeStreamingAsyncClient cl= TranscribeStreamingAsyncClient.builder()
                     .credentialsProvider(getCredentials())
                     .endpointOverride(new URI(endpoint))
                     .region(region)
                     .build();
+            System.out.println("Created client with endpoint: " + endpoint);
+            return cl ;
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Invalid URI syntax for endpoint: " + endpoint);
         }
@@ -85,8 +87,9 @@ public class TranscribeStreamingClientWrapper {
         try {
             region = new DefaultAwsRegionProviderChain().getRegion();
         } catch (SdkClientException e) {
-            region = Region.US_WEST_2;
+            region = Region.AP_SOUTH_1;
         }
+        System.out.println("Region: " + region);
         return region;
     }
 
@@ -199,7 +202,11 @@ public class TranscribeStreamingClientWrapper {
      */
     private StartStreamTranscriptionRequest getRequest(Integer mediaSampleRateHertz) {
         return StartStreamTranscriptionRequest.builder()
-                .languageCode(LanguageCode.EN_US.toString())
+                //.languageCode("en-IN")
+                .identifyMultipleLanguages(Boolean.TRUE)
+                .showSpeakerLabel(Boolean.TRUE)
+                .languageOptions("en-US,hi-IN")
+                .preferredLanguage("en-US")
                 .mediaEncoding(MediaEncoding.PCM)
                 .mediaSampleRateHertz(mediaSampleRateHertz)
                 .build();
